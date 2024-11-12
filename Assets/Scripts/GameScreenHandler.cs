@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameScreenHandler : MonoBehaviour
@@ -18,14 +19,27 @@ public class GameScreenHandler : MonoBehaviour
     private List<Button> _buttons;
     [SerializeField]
     private Button _nextQuestionButton;
+    [SerializeField]
+    private Button _restartButton;
+    [SerializeField]
+    private GameObject _gameOverObject;
 
     [SerializeField]
     private Image _flagImage;
     [SerializeField]
     private TMP_Text _resultText;
+    [SerializeField]
+    private TMP_Text _resultScoreGameOverScreen;
+    [SerializeField]
+    private TMP_Text _resultScoreMainScreenText;
 
     private int _rightButtonNumber;
-    private int _countryConfigNumber;
+
+    private int _attemptsNumber = 20;
+    private int _currentsAttemptNumber;
+    private int _rightAnswersNumber;
+
+    private List<int> _countriesConfigsNumbers;
 
     [SerializeField]
     private List<TMP_Text> _buttonsTexts;
@@ -35,24 +49,44 @@ public class GameScreenHandler : MonoBehaviour
     public void Initialize(List<CountriesConfig> countriesConfigs)
     {
         _countriesConfig = countriesConfigs;
+        _countriesConfigsNumbers = new List<int>();
         _firstButton.onClick.AddListener(() => ChooseAnswer(0));
         _secondButton.onClick.AddListener(() => ChooseAnswer(1));
         _thirdButton.onClick.AddListener(() => ChooseAnswer(2));
         _fourthButton.onClick.AddListener(() => ChooseAnswer(3));
         _nextQuestionButton.onClick.AddListener(CreateNewQuestion);
+        _restartButton.onClick.AddListener(Restart);
         CreateNewQuestion();
     }
 
     private void CreateNewQuestion()
     {
-        _resultText.text = null;
-        _countryConfigNumber = UnityEngine.Random.Range(0, _countriesConfig.Count);
-        _flagImage.sprite = _countriesConfig[_countryConfigNumber].FlagSprite;
-        _rightButtonNumber = UnityEngine.Random.Range(0, _buttons.Count);
+        if (_currentsAttemptNumber < _attemptsNumber)
+        {
+            _currentsAttemptNumber++;
+            _resultText.text = null;
+            var countryConfigNumber = CreateNewConfigNumber();
+            _flagImage.sprite = _countriesConfig[countryConfigNumber].FlagSprite;
+            _rightButtonNumber = UnityEngine.Random.Range(0, _buttons.Count);
 
-        var text = _buttons[_rightButtonNumber].GetComponentInChildren<TMP_Text>();
-        text.text = _countriesConfig[_countryConfigNumber].Country.ToString();
-        CrateOtherButtonsText();
+            var text = _buttons[_rightButtonNumber].GetComponentInChildren<TMP_Text>();
+            text.text = _countriesConfig[countryConfigNumber].Country.ToString();
+            CrateOtherButtonsText();
+            SetActiveButtons(true);
+        }
+        else
+            ShowGameOver();
+    }
+
+    private int CreateNewConfigNumber()
+    {
+        var countryConfigNumber = UnityEngine.Random.Range(0, _countriesConfig.Count);
+        while (_countriesConfigsNumbers.Contains(countryConfigNumber))
+        {
+            countryConfigNumber = UnityEngine.Random.Range(0, _countriesConfig.Count);
+        }
+        _countriesConfigsNumbers.Add(countryConfigNumber);
+        return countryConfigNumber;
     }
 
     private void CrateOtherButtonsText()
@@ -70,7 +104,7 @@ public class GameScreenHandler : MonoBehaviour
 
     private String GetNewCountryText()
     {
-        var text = _countriesConfig[UnityEngine.Random.Range(0, _countriesConfig.Count)].Country.ToString();
+        var text = _countriesConfig[CreateNewConfigNumber()].Country.ToString();
         return text;
     }
 
@@ -79,9 +113,44 @@ public class GameScreenHandler : MonoBehaviour
         if (answerNumber == _rightButtonNumber)
         {
             _resultText.text = "Правильно";
+            _rightAnswersNumber++;
+            _resultScoreMainScreenText.text = _rightAnswersNumber.ToString();
         }
         else
+        {
             _resultText.text = "Неправильно";
+        }
+        SetActiveButtons(false);
     }
-    
+
+    private void SetActiveButtons(bool IsActive)
+    {
+        _firstButton.enabled = IsActive;
+        _secondButton.enabled = IsActive;
+        _thirdButton.enabled = IsActive;
+        _fourthButton.enabled = IsActive;
+    }
+
+    private void ShowGameOver()
+    {
+        _gameOverObject.SetActive(true);
+        Debug.Log(_resultScoreGameOverScreen);
+        _resultScoreGameOverScreen.text = _rightAnswersNumber.ToString();
+    }
+
+    private void Restart()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    private void OnDestroy()
+    {
+        _firstButton.onClick.RemoveListener(() => ChooseAnswer(0));
+        _secondButton.onClick.RemoveListener(() => ChooseAnswer(1));
+        _thirdButton.onClick.RemoveListener(() => ChooseAnswer(2));
+        _fourthButton.onClick.RemoveListener(() => ChooseAnswer(3));
+        _nextQuestionButton.onClick.RemoveListener(CreateNewQuestion);
+        _restartButton.onClick.RemoveListener(Restart);
+    }
+
 }

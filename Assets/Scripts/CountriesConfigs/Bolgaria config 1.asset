@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31da431120ae6cc408f2c4ea9830d16a, type: 3}
   m_Name: Bolgaria config 1
   m_EditorClassIdentifier: 
-  _flagSprite: {fileID: 0}
+  _flagSprite: {fileID: 21300000, guid: e743ef50a118eae419c1b5f05ab97766, type: 3}
   _country: 110

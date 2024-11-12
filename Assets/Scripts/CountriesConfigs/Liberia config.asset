@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31da431120ae6cc408f2c4ea9830d16a, type: 3}
   m_Name: Liberia config
   m_EditorClassIdentifier: 
-  _flagSprite: {fileID: 0}
+  _flagSprite: {fileID: 21300000, guid: 3a1aa4813dc43cd438ebe9cf1559d768, type: 3}
   _country: 56
