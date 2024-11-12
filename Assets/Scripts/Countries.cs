@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class Countries 
 {
 
@@ -20,8 +16,8 @@ public enum CountriesNames
     Камбоджа,
     Кирибати,
     Китай,
-    Корейская_Народно_Демократическая_Республика,
-    Лаосская_Народно_Демократическая_Республика,
+    КНДР,
+    Лаос,
     Малайзия,
     Мальдивские_Острова,
     Маршалловы_Острова,

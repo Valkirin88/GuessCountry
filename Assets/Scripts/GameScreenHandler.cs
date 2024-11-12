@@ -23,6 +23,8 @@ public class GameScreenHandler : MonoBehaviour
     private Button _restartButton;
     [SerializeField]
     private GameObject _gameOverObject;
+    [SerializeField]
+    private GameObject _correctVersionObject;
 
     [SerializeField]
     private Image _flagImage;
@@ -63,6 +65,7 @@ public class GameScreenHandler : MonoBehaviour
     {
         if (_currentsAttemptNumber < _attemptsNumber)
         {
+            _correctVersionObject.SetActive(false);
             _currentsAttemptNumber++;
             _resultText.text = null;
             var countryConfigNumber = CreateNewConfigNumber();
@@ -121,6 +124,14 @@ public class GameScreenHandler : MonoBehaviour
             _resultText.text = "Неправильно";
         }
         SetActiveButtons(false);
+        ShowCorrectVersion(_rightButtonNumber);
+    }
+
+    private void ShowCorrectVersion(int rightButtonNumber)
+    {
+        var pos = _buttons[_rightButtonNumber].transform.position;
+        _correctVersionObject.transform.position = pos;  
+        _correctVersionObject.SetActive(true);
     }
 
     private void SetActiveButtons(bool IsActive)
